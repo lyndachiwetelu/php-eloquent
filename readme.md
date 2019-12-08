@@ -5,7 +5,7 @@ Libraries Used
 =================
 - Fast Route for Routing https://github.com/nikic/FastRoute
 - Eloquent ORM for Data Storage https://github.com/illuminate/database
-- Guzzle Http for API Requests http://docs.guzzlephp.org/en/stable/
+- Guzzle Http for Http Requests http://docs.guzzlephp.org/en/stable/
 
 External APIs
 =================
