@@ -4,19 +4,29 @@ namespace App\Controllers;
 
 use App\Models\Color;
 use App\Services\Request;
+use App\Repositories\ColorRepository;
 
 class ColorController
 {
+	public static $repository; 
+
+	private static function setRepository()
+	{
+		$colorRepository = new ColorRepository();
+		self::$repository = $colorRepository;
+	}
+
 	public static function getColors($vars = [])
 	{
-		$colors = Color::all();
-		return $colors;
+		self::setRepository();
+		return $colors = self::$repository->getAll();
 	}
 
 	public static function getColor($vars = [])
 	{
+		self::setRepository();
 		$hexcode = $vars['hexcode'] ?? '';
-		$color = Color::where('hexcode', $hexcode)->first();
+		$color = self::$repository->getOne($hexcode);
 		return $color;
 	}
 
@@ -28,7 +38,8 @@ class ColorController
 		if (empty($hexcode) || empty($family) || empty($colorName)) {
 			return ['error' => 'Please supply hexcode, name and family to make a successful request'];
 		}
-		$color = Color::create([
+		self::setRepository();
+		$color = self::$repository->add([
 			'hexcode' 	=>  $hexcode,
 			'name' 		=>  $colorName, 
 			'family'	=>	$family]);
@@ -40,26 +51,25 @@ class ColorController
 		$hexcode = $vars['hexcode'] ?? '';
 		$family = $_POST['family'] ?? '';
 		$name = $_POST['name'] ?? '';
-
-		$color = Color::where('hexcode', $hexcode)->first();
+		self::setRepository();
+		$color = self::$repository->getOne($hexcode);
 		if (!$color) {
 			return ['error' => 'Color with hexcode does not exist'];
 		}
 
-		$color->family = $family;
-		$color->name = $name;
-		$color->save();
-		return $color;
+		$updated = self::$repository->update($hexcode, ['family' => $family, 'name' => $name]);
+		return self::$repository->getOne($hexcode);
 	}
 
 	public static function removeColor($vars = [])
 	{
+		self::setRepository();
 		$hexcode = $vars['hexcode'] ?? '';
-		$color = Color::where('hexcode', $hexcode)->first();
+		$color = self::$repository->getOne($hexcode);
 		if (!$color) {
 			return ['error' => 'Could not delete color. Color Not Found'];
 		}
-		$color->delete();
+		self::$repository->delete($hexcode);
 		return ['data' => 'The color has been removed'];
 	}
 
