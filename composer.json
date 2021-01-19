@@ -3,7 +3,7 @@
     "description": "A php eloquent project",
     "require": {
         "nikic/fast-route": "^1.3",
-        "illuminate/database": "^5.8",
+        "illuminate/database": "^6.20",
         "guzzlehttp/guzzle": "~6.0"
     },
     "autoload": {
